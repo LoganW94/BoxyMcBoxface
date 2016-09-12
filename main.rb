@@ -15,9 +15,9 @@ class Window < Gosu::Window
 
 		@new_game_pos = height/3
 		@quit_game_pos = (height/3)*2
-		@resume_game_pos = @new_game_pos
 		@dot_pos = @new_game_pos
 		@pos_x = width/4
+
 
 		
 		@font = Gosu::Font.new(70)
@@ -41,11 +41,45 @@ class Window < Gosu::Window
 
 
 
-		if @state == 0 # main menu state
+		if @state == 0 && @continue == false# main menu state
+			
 
             if button_down?(Gosu::KbUp) && @new_press_up
 
- 
+ 				@dot_pos = @new_game_pos
+
+            	if @dot_pos == @quit_game_pos
+            		@dot_pos = @new_game_pos
+            	end          			
+                                
+            end    
+
+            if button_down?(Gosu::KbDown) && @new_press_down
+                   
+            	if @dot_pos == @new_game_pos
+            		@dot_pos = @quit_game_pos
+            	end            	
+
+            end
+		
+			
+			if button_down?(Gosu::KbReturn) && @new_press_enter
+
+				if @dot_pos == @new_game_pos
+					@state = 2
+				elsif @dot_pos == @quit_game_pos
+					self.close
+				end						
+			end
+
+		elsif @state == 0 && @continue == true
+			@new_game = @resume_game
+
+
+            if button_down?(Gosu::KbUp) && @new_press_up
+
+ 				@dot_pos = @new_game_pos
+
             	if @dot_pos == @quit_game_pos
             		@dot_pos = @new_game_pos
             	end          			
@@ -65,19 +99,39 @@ class Window < Gosu::Window
 
 				if @dot_pos == @new_game_pos
 					@state = 1
-					@continue = true
 				elsif @dot_pos == @quit_game_pos
 					self.close
 				end						
-			end
+			end				
 
 		elsif @state == 1 # game state
 
+			#@player = Player.new
+
 			if button_down?(Gosu::KbEscape) && @new_press_escape
 				@state = 0
-
+				@dot_pos = @new_game_pos
 			end
 
+
+
+		elsif @state == 2 # Player Creation
+
+			@dot_pos = height/2 - 35
+
+            if button_down?(Gosu::KbDown) && @new_press_down
+                               
+            end
+
+            if button_down?(Gosu::KbLeft) && @new_press_left
+                               
+            end
+				
+            if button_down?(Gosu::KbReturn) && @new_press_enter
+            	@state = 1
+            	@continue = true
+
+            end
 			
 		end	
 
@@ -101,6 +155,8 @@ class Window < Gosu::Window
 			@font.draw("#{@dot}", @pos_x - 60, @dot_pos, 1)
 		elsif @state == 1
 			@font.draw("In Game", 200, height/2-70, 1)
+		elsif @state == 2
+			@font.draw("new game", 200, height/2-70, 1)				
 		end
 
 	end
