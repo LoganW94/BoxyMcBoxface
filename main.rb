@@ -38,8 +38,19 @@ class Window < Gosu::Window
         @new_press_escape, 
         @new_press_tab = false
 
-        @level_one_code = 0000
-        @level_two_code = 4533
+        @level = 1
+		@confirm = false
+		
+		@code_entry_one = 0
+		@code_entry_two = 0
+		@code_entry_three = 0
+		@code_entry_four = 0
+		
+		@mark = "_"
+		@markx = 385
+
+        @level_one_code = "0000"
+        @level_two_code = "5555"
         #etc
 
 	end
@@ -129,36 +140,61 @@ class Window < Gosu::Window
 				@is_player = true
 			end
 
-			@dot_pos = height/2 - 35
-			@level = 1
-			@display = "Press Enter to play level: #{@level}"
+			#@dot_pos = height/2 - 35
+			@move_markx = 33
 
-			
-			@code_entry_one = "0"
-			@code_entry_two = "0"
-			@code_entry_three = "0"
-			@code_entry_four = "0"
-			@code = @code_entry_one + @code_entry_two + @code_entry_three + @code_entry_four
-			@Code_display = "Level Code: #{@code}"
-			
 
-			if button_down?(Gosu::KbLeft) &&  @new_press_left
-                
+			if button_down?(Gosu::KbLeft) &&  @new_press_left && @markx != 385
+				@markx -= @move_markx
             end
 
-            if button_down?(Gosu::KbRight) &&  @new_press_right
-                                   
-            end       
-
-            if button_down?(Gosu::KbUp) && @new_press_up         			
-                                
-            end    
-
-            if button_down?(Gosu::KbDown) && @new_press_down
-            	
+            if button_down?(Gosu::KbRight) &&  @new_press_right && @markx != 484
+            	@markx += @move_markx                              
             end	
+
+            if @markx == 385 &&	button_down?(Gosu::KbUp) && @new_press_up && @code_entry_one != 9
+            	@code_entry_one += 1
+            elsif @markx == 385 && button_down?(Gosu::KbDown) && @new_press_down && @code_entry_one != 0
+            	@code_entry_one -= 1
+            end
+
+            if @markx == 418 &&	button_down?(Gosu::KbUp) && @new_press_up && @code_entry_two != 9
+            	@code_entry_two += 1
+            elsif @markx == 418 && button_down?(Gosu::KbDown) && @new_press_down && @code_entry_two != 0
+            	@code_entry_two -= 1
+            end
+
+            if @markx == 451 &&	button_down?(Gosu::KbUp) && @new_press_up && @code_entry_three != 9
+            	@code_entry_three += 1
+            elsif @markx == 451 && button_down?(Gosu::KbDown) && @new_press_down && @code_entry_three != 0
+            	@code_entry_three -= 1
+            end
+
+            if @markx == 484 &&	button_down?(Gosu::KbUp) && @new_press_up && @code_entry_four != 9
+            	@code_entry_four += 1
+            elsif @markx == 484 && button_down?(Gosu::KbDown) && @new_press_down && @code_entry_four != 0
+            	@code_entry_four -= 1
+            end
+
+            @code = "#{@code_entry_one}#{@code_entry_two}#{@code_entry_three}#{@code_entry_four}"
+			@Code_display = "Level Code: #{@code_entry_one}#{@code_entry_two}#{@code_entry_three}#{@code_entry_four}"
+
+			if @code == @level_one_code
+				@level = 1
+				@display = "Press Enter to play level: #{@level}"
+				@confirm = true
+			elsif @code == @level_two_code
+				@level = 2
+				@display = "Press Enter to play level: #{@level}"
+				@confirm = true
+			else
+				@display = "Enter level code"
+				@level = 0
+				@confirm = false
+			end
+			
 				
-            if button_down?(Gosu::KbReturn) && @new_press_enter
+            if button_down?(Gosu::KbReturn) && @new_press_enter && @confirm == true
             	@state = 1
             	@continue = true
 
@@ -169,6 +205,8 @@ class Window < Gosu::Window
 				@continue = false
 				@dot_pos = @new_game_pos
 			end
+
+
 ##############################################################################
 		end	
 
@@ -189,13 +227,14 @@ class Window < Gosu::Window
 		if @state == 0
 			@font.draw("#{@new_game}", @pos_x, @new_game_pos, 1 )
 			@font.draw("#{@quit_game}", @pos_x, @quit_game_pos, 1)
-			@font_small.draw("#{@dot}", @pos_x - 25, @dot_pos + 20, 1)
+			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
 		elsif @state == 1
 			@player.draw(@player_pos_x, @player_pos_y)
 
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)
-			@font.draw("#{@Code_display}", 25, height/2, 1)				
+			@font.draw("#{@Code_display}", 25, height/2, 1)
+			@font.draw("#{@mark}", @markx.to_i, height/2, 1)				
 		end
 
 	end
