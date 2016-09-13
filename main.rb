@@ -51,7 +51,17 @@ class Window < Gosu::Window
 
         @level_one_code = "0000"
         @level_two_code = "5555"
-        #etc
+        #replace with hash
+
+##############################################################################
+#physics variables here
+		@gravity = 20
+		@frames = 0
+
+
+
+
+##############################################################################        
 
 	end
 
@@ -88,13 +98,27 @@ class Window < Gosu::Window
 				end						
 			end
 ##############################################################################
-		elsif @state == 1 # game state			
+		elsif @state == 1 # game state	
+
+			@floor = 432
+			
+
+			if @player_pos_y <= @floor
+				@player_pos_y += @gravity
+			end
+
 
 			if button_down?(Gosu::KbEscape) && @new_press_escape
 				@state = 0
 				@dot_pos = @new_game_pos
 				@new_game = @resume_game
 			end
+
+			if button_down?(Gosu::KbUp) && @new_press_up
+         		#jump
+         		@player_pos_y -= 70	
+                                
+            end 
 
 			if button_down?(Gosu::KbLeft)
             	@player_pos_x -=5                  
