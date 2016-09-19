@@ -2,6 +2,7 @@ require 'gosu'
 
 require_relative 'player'
 require_relative 'methods'
+require_relative 'background'
 
 class Window < Gosu::Window
 
@@ -16,15 +17,23 @@ class Window < Gosu::Window
 		@continue = false
 
 		@is_player = false
+		@is_background = false
 		@is_method = false
 
 		@new_game_pos = height/3
 		@quit_game_pos = (height/3)*2
 		@dot_pos = @new_game_pos
 		@pos_x = width/4
-		@player_pos_x = 150
+		@player_pos_x = width/2-32
 		@player_pos_y = 400
+		@back_pos_x = 0
+		@back_pos_y = -150
+		@back_tile_1 = 0
+		@back_tile_2 = 800
+		@back_tile_3 = 1600
+		@translate = 2400
 
+		@methods = Methods.new
 		@font = Gosu::Font.new(70)
 		@font_small = Gosu::Font.new(30)
 		@dot = "@"
@@ -63,18 +72,11 @@ class Window < Gosu::Window
 		@frames = 0
 
 
-
-
 ##############################################################################        
 
 	end
 
 	def update
-
-		if @is_method == false
-			@methods = Methods.new
-			@is_method = true
-		end
 
 		@methods.update
 
@@ -112,7 +114,8 @@ class Window < Gosu::Window
 		elsif @state == 1
 
 			@floor = 432
-			
+
+
 
 			if @player_pos_y <= @floor
 				@player_pos_y += @gravity
@@ -126,9 +129,8 @@ class Window < Gosu::Window
 			end
 
 			if button_down?(Gosu::KbUp) && @new_press_up #jump
-         		jump = true
-         		@player_pos_y -= @methods.jump(jump)
-                                
+         		
+         		@player_pos_y -= @methods.jump # needs redone                                
             end 
 
 			if button_down?(Gosu::KbLeft)
@@ -142,6 +144,38 @@ class Window < Gosu::Window
             if button_down?(Gosu::KbReturn) && @new_press_enter
             	@state = 3
             end
+
+            if @player_pos_x <= 300
+            	@back_tile_1 += 2
+            	@back_tile_2 += 2
+            	@back_tile_3 += 2
+            	@player_pos_x += 5
+            elsif @player_pos_x >= 500
+            	@back_tile_1 -= 2
+            	@back_tile_2 -= 2
+            	@back_tile_3 -= 2
+            	@player_pos_x -= 5
+            end	
+
+            if @back_tile_1 == -800
+            	@back_tile_1 += 2400
+            elsif @back_tile_1 == 1600
+            	@back_tile_1 -= 2400
+            end
+
+            if @back_tile_2 == -800
+            	@back_tile_2 += 2400
+            elsif @back_tile_2 == 1600
+            	@back_tile_2 -= 2400
+            end
+
+            if @back_tile_3 == -800
+            	@back_tile_3 += 2400
+            elsif @back_tile_3 == 1600
+            	@back_tile_3 -= 2400
+            end 
+            		
+			
 ############################################################################## # main menu if game in progress
 		elsif @state == 0 && @continue == true 
 
@@ -174,11 +208,18 @@ class Window < Gosu::Window
 ############################################################################## # level select
 		elsif @state == 2
 
+
+
 			@has_run = false
 
 			if @is_player == false
 				@player = Player.new
 				@is_player = true
+			end
+
+			if @is_background == false
+				@background = Background.new
+				@is_background = true
 			end
 
 			#@dot_pos = height/2 - 35
@@ -293,6 +334,10 @@ class Window < Gosu::Window
 			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
 		elsif @state == 1
 			@player.draw(@player_pos_x, @player_pos_y)
+
+			@background.draw(@back_tile_1, @back_pos_y)
+			@background.draw(@back_tile_2, @back_pos_y)
+			@background.draw(@back_tile_3, @back_pos_y)
 
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)

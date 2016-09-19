@@ -18,7 +18,7 @@ class Player
 
 	def draw pos_x, pos_y
 
-		@image.draw(pos_x, pos_y, 2)
+		@image.draw(pos_x, pos_y, 3)
 		
 	end
 
