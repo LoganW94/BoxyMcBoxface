@@ -1,6 +1,7 @@
 require 'gosu'
 
 require_relative 'player'
+require_relative 'methods'
 
 class Window < Gosu::Window
 
@@ -13,7 +14,9 @@ class Window < Gosu::Window
 
 		@state = 0
 		@continue = false
+
 		@is_player = false
+		@is_method = false
 
 		@new_game_pos = height/3
 		@quit_game_pos = (height/3)*2
@@ -49,13 +52,14 @@ class Window < Gosu::Window
 		@mark = "_"
 		@markx = 385
 
-        @level_one_code = "0000"
-        @level_two_code = "5555"
-        #replace with hash
+        @level_one_code = "0000"    #replace with hash
+        @level_two_code = "5555"    #replace with hash
+     
+        @has_run = false
 
 ##############################################################################
 #physics variables here
-		@gravity = 20
+		@gravity = 5
 		@frames = 0
 
 
@@ -67,8 +71,15 @@ class Window < Gosu::Window
 
 	def update
 
-##############################################################################
-		if @state == 0 && @continue == false# main menu state if no game in progress
+		if @is_method == false
+			@methods = Methods.new
+			@is_method = true
+		end
+
+		@methods.update
+
+############################################################################## # main menu state if no game in progress
+		if @state == 0 && @continue == false
 			
 
             if button_down?(Gosu::KbUp) && @new_press_up
@@ -97,8 +108,8 @@ class Window < Gosu::Window
 					self.close
 				end						
 			end
-##############################################################################
-		elsif @state == 1 # game state	
+############################################################################## # game state	
+		elsif @state == 1
 
 			@floor = 432
 			
@@ -114,9 +125,9 @@ class Window < Gosu::Window
 				@new_game = @resume_game
 			end
 
-			if button_down?(Gosu::KbUp) && @new_press_up
-         		#jump
-         		@player_pos_y -= 70	
+			if button_down?(Gosu::KbUp) && @new_press_up #jump
+         		jump = true
+         		@player_pos_y -= @methods.jump(jump)
                                 
             end 
 
@@ -127,8 +138,12 @@ class Window < Gosu::Window
             if button_down?(Gosu::KbRight)
                 @player_pos_x +=5                                     
             end
-##############################################################################
-		elsif @state == 0 && @continue == true # main menu if game in progress
+
+            if button_down?(Gosu::KbReturn) && @new_press_enter
+            	@state = 3
+            end
+############################################################################## # main menu if game in progress
+		elsif @state == 0 && @continue == true 
 
             if button_down?(Gosu::KbUp) && @new_press_up
 
@@ -156,8 +171,10 @@ class Window < Gosu::Window
 					self.close
 				end						
 			end	
-##############################################################################
-		elsif @state == 2 # level select
+############################################################################## # level select
+		elsif @state == 2
+
+			@has_run = false
 
 			if @is_player == false
 				@player = Player.new
@@ -203,6 +220,8 @@ class Window < Gosu::Window
             @code = "#{@code_entry_one}#{@code_entry_two}#{@code_entry_three}#{@code_entry_four}"
 			@Code_display = "Level Code: #{@code_entry_one}#{@code_entry_two}#{@code_entry_three}#{@code_entry_four}"
 
+
+			#replace with hash
 			if @code == @level_one_code
 				@level = 1
 				@display = "Press Enter to play level: #{@level}"
@@ -231,8 +250,28 @@ class Window < Gosu::Window
 			end
 
 
-##############################################################################
+############################################################################## # end level state displays next level code
+		elsif @state == 3
+
+			if @has_run == false
+				@next_level = @level + 1
+				@has_run = true
+			end
+
+			#check @next_level against hash and return code
+			@next_level_code = 5555
+
+			@temp_end_text = "You beat level: #{@level}!!"
+			@temp_end_text_2 = "Level: #{@next_level} code is: #{@next_level_code}"	
+
+            if button_down?(Gosu::KbEscape) && @new_press_escape
+				@state = 0
+				@continue = false
+				@dot_pos = @new_game_pos
+			end
+
 		end	
+############################################################################## # other stuff to update
 
 		@new_press_enter = !button_down?(Gosu::KbReturn)
 		@new_press_up= !button_down?(Gosu::KbUp)
@@ -258,7 +297,11 @@ class Window < Gosu::Window
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)
 			@font.draw("#{@Code_display}", 25, height/2, 1)
-			@font.draw("#{@mark}", @markx.to_i, height/2, 1)				
+			@font.draw("#{@mark}", @markx.to_i, height/2, 1)
+		elsif @state == 3
+			@font.draw("#{@temp_end_text}", @pos_x-200, @new_game_pos, 1 )
+			@font.draw("#{@temp_end_text_2}", @pos_x-200, @quit_game_pos, 1)
+													
 		end
 
 	end
