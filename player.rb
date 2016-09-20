@@ -3,13 +3,11 @@ require 'gosu'
 
 class Player
 
-    attr_accessor :exp, :level, :name
+    attr_accessor :name
 
 
 	def initialize
 
-		exp = 0
-		level = 1
 		name = "Boxy McBoxface"
 
 		@image = Gosu::Image.new("player.png", false)
@@ -18,7 +16,7 @@ class Player
 
 	def draw pos_x, pos_y
 
-		@image.draw(pos_x, pos_y, 3)
+		@image.draw(pos_x, pos_y, 4)
 		
 	end
 

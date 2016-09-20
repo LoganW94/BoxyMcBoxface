@@ -23,15 +23,19 @@ class Window < Gosu::Window
 		@new_game_pos = height/3
 		@quit_game_pos = (height/3)*2
 		@dot_pos = @new_game_pos
+
 		@pos_x = width/4
 		@player_pos_x = width/2-32
-		@player_pos_y = 400
 		@back_pos_x = 0
-		@back_pos_y = -150
+		@player_pos_y = 368
+		@back_pos_y = -100
 		@back_tile_1 = 0
 		@back_tile_2 = 800
 		@back_tile_3 = 1600
-		@translate = 2400
+		@level_tile_1 = 0
+		@level_tile_2 = 800
+		@level_tile_3 = 1600
+		
 
 		@methods = Methods.new
 		@font = Gosu::Font.new(70)
@@ -65,20 +69,24 @@ class Window < Gosu::Window
         @level_two_code = "5555"    #replace with hash
      
         @has_run = false
-
-##############################################################################
-#physics variables here
-		@gravity = 5
-		@frames = 0
+        @jump = false
+        @jump_frames = 0
+############################################################################## # hard code enemy stuff
 
 
-##############################################################################        
+
+############################################################################## #physics variables here
+
+		@gravity = 6
+		@player_move_rate = 6
+       
 
 	end
 
 	def update
 
 		@methods.update
+
 
 ############################################################################## # main menu state if no game in progress
 		if @state == 0 && @continue == false
@@ -113,14 +121,11 @@ class Window < Gosu::Window
 ############################################################################## # game state	
 		elsif @state == 1
 
-			@floor = 432
+			@background.update
 
-
-
-			if @player_pos_y <= @floor
+			if @player_pos_y < 368 && @player_pos_y != 368
 				@player_pos_y += @gravity
 			end
-
 
 			if button_down?(Gosu::KbEscape) && @new_press_escape
 				@state = 0
@@ -128,52 +133,52 @@ class Window < Gosu::Window
 				@new_game = @resume_game
 			end
 
-			if button_down?(Gosu::KbUp) && @new_press_up #jump
-         		
-         		@player_pos_y -= @methods.jump # needs redone                                
+			if button_down?(Gosu::KbUp) && @new_press_up && @player_pos_y == 368
+         		@jump = true         		                                
             end 
 
+            if @jump == true && @jump_frames < 15
+            	@jump_frames +=1
+            elsif @jump == true && @jump_frames == 15
+            	@jump =false
+            	@jump_frames = 0	
+            end
+
+            if @jump == true
+            	@player_pos_y -= 10
+            end
+
 			if button_down?(Gosu::KbLeft)
-            	@player_pos_x -=5                  
+
+            	@back_tile_1 += 1
+            	@back_tile_2 += 1
+
+            	@level_tile_1 += @player_move_rate
+            	@level_tile_2 += @player_move_rate
+            	             
             end
 
             if button_down?(Gosu::KbRight)
-                @player_pos_x +=5                                     
+    
+                @back_tile_1 -= 1
+            	@back_tile_2 -= 1
+
+            	@level_tile_1 -= @player_move_rate
+            	@level_tile_2 -= @player_move_rate
+            	                               
             end
 
             if button_down?(Gosu::KbReturn) && @new_press_enter
             	@state = 3
             end
 
-            if @player_pos_x <= 300
-            	@back_tile_1 += 2
-            	@back_tile_2 += 2
-            	@back_tile_3 += 2
-            	@player_pos_x += 5
-            elsif @player_pos_x >= 500
-            	@back_tile_1 -= 2
-            	@back_tile_2 -= 2
-            	@back_tile_3 -= 2
-            	@player_pos_x -= 5
-            end	
+            # background move
 
-            if @back_tile_1 == -800
-            	@back_tile_1 += 2400
-            elsif @back_tile_1 == 1600
-            	@back_tile_1 -= 2400
-            end
-
-            if @back_tile_2 == -800
-            	@back_tile_2 += 2400
-            elsif @back_tile_2 == 1600
-            	@back_tile_2 -= 2400
-            end
-
-            if @back_tile_3 == -800
-            	@back_tile_3 += 2400
-            elsif @back_tile_3 == 1600
-            	@back_tile_3 -= 2400
-            end 
+            @back_tile_1 = @methods.tile_move(@back_tile_1)
+        	@back_tile_2 = @methods.tile_move(@back_tile_2)
+        
+        	@level_tile_1 = @methods.tile_move(@level_tile_1)
+        	@level_tile_2 = @methods.tile_move(@level_tile_2)
             		
 			
 ############################################################################## # main menu if game in progress
@@ -332,17 +337,23 @@ class Window < Gosu::Window
 			@font.draw("#{@new_game}", @pos_x, @new_game_pos, 1 )
 			@font.draw("#{@quit_game}", @pos_x, @quit_game_pos, 1)
 			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
+
 		elsif @state == 1
 			@player.draw(@player_pos_x, @player_pos_y)
 
-			@background.draw(@back_tile_1, @back_pos_y)
-			@background.draw(@back_tile_2, @back_pos_y)
-			@background.draw(@back_tile_3, @back_pos_y)
+			@background.draw_background(@back_tile_1, @back_pos_y)
+			@background.draw_background(@back_tile_2, @back_pos_y)
+
+			@background.draw_level(@level_tile_1, @back_pos_y)
+			@background.draw_level(@level_tile_2, @back_pos_y)
+
+			@background.draw_effects
 
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)
 			@font.draw("#{@Code_display}", 25, height/2, 1)
 			@font.draw("#{@mark}", @markx.to_i, height/2, 1)
+
 		elsif @state == 3
 			@font.draw("#{@temp_end_text}", @pos_x-200, @new_game_pos, 1 )
 			@font.draw("#{@temp_end_text_2}", @pos_x-200, @quit_game_pos, 1)
