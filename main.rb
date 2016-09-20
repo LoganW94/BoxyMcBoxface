@@ -3,6 +3,7 @@ require 'gosu'
 require_relative 'player'
 require_relative 'methods'
 require_relative 'background'
+require_relative 'enemy'
 
 class Window < Gosu::Window
 
@@ -70,15 +71,16 @@ class Window < Gosu::Window
      
         @has_run = false
         @jump = false
-        @jump_frames = 0
+    
 ############################################################################## # hard code enemy stuff
-
+	
+		@is_enemy = false
 
 
 ############################################################################## #physics variables here
 
-		@gravity = 6
-		@player_move_rate = 6
+		@gravity = 5
+		@player_move_rate = 4
        
 
 	end
@@ -123,6 +125,22 @@ class Window < Gosu::Window
 
 			@background.update
 
+
+			# enemy Code
+			if @is_enemy == false
+				@enemy = Enemy.new
+				@enemy.pos_x = width/2 + 200
+				@enemy.pos_y = 368
+				@is_enemy = true
+			end
+
+			@enemy.update
+
+
+
+			# player Code
+
+			
 			if @player_pos_y < 368 && @player_pos_y != 368
 				@player_pos_y += @gravity
 			end
@@ -133,38 +151,38 @@ class Window < Gosu::Window
 				@new_game = @resume_game
 			end
 
-			if button_down?(Gosu::KbUp) && @new_press_up && @player_pos_y == 368
+			if button_down?(Gosu::KbUp) && @new_press_up && @player_pos_y >= 368
          		@jump = true         		                                
             end 
-
-            if @jump == true && @jump_frames < 15
-            	@jump_frames +=1
-            elsif @jump == true && @jump_frames == 15
-            	@jump =false
-            	@jump_frames = 0	
-            end
 
             if @jump == true
             	@player_pos_y -= 10
             end
 
+            @jump = @methods.jump(@jump)
+
+            # movement
 			if button_down?(Gosu::KbLeft)
 
-            	@back_tile_1 += 1
-            	@back_tile_2 += 1
+            	@back_tile_1 += 2
+            	@back_tile_2 += 2
 
             	@level_tile_1 += @player_move_rate
             	@level_tile_2 += @player_move_rate
+
+            	@enemy.pos_x += @player_move_rate
             	             
             end
 
             if button_down?(Gosu::KbRight)
     
-                @back_tile_1 -= 1
-            	@back_tile_2 -= 1
+                @back_tile_1 -= 2
+            	@back_tile_2 -= 2
 
             	@level_tile_1 -= @player_move_rate
             	@level_tile_2 -= @player_move_rate
+
+            	@enemy.pos_x -= @player_move_rate
             	                               
             end
 
@@ -172,7 +190,7 @@ class Window < Gosu::Window
             	@state = 3
             end
 
-            # background move
+            # background loop
 
             @back_tile_1 = @methods.tile_move(@back_tile_1)
         	@back_tile_2 = @methods.tile_move(@back_tile_2)
@@ -214,7 +232,6 @@ class Window < Gosu::Window
 		elsif @state == 2
 
 
-
 			@has_run = false
 
 			if @is_player == false
@@ -226,6 +243,7 @@ class Window < Gosu::Window
 				@background = Background.new
 				@is_background = true
 			end
+
 
 			#@dot_pos = height/2 - 35
 			@move_markx = 33
@@ -339,6 +357,11 @@ class Window < Gosu::Window
 			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
 
 		elsif @state == 1
+
+			if @is_enemy == true
+				@enemy.draw
+			end
+
 			@player.draw(@player_pos_x, @player_pos_y)
 
 			@background.draw_background(@back_tile_1, @back_pos_y)
