@@ -129,7 +129,7 @@ class Window < Gosu::Window
 			# enemy Code
 			if @is_enemy == false
 				@enemy = Enemy.new
-				@enemy.pos_x = width/2 + 200
+				@enemy.pos_x = 700
 				@enemy.pos_y = 368
 				@is_enemy = true
 			end
@@ -161,7 +161,7 @@ class Window < Gosu::Window
 
             @jump = @methods.jump(@jump)
 
-            # movement
+            # player movement
 			if button_down?(Gosu::KbLeft)
 
             	@back_tile_1 += 2

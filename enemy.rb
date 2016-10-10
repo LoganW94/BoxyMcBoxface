@@ -15,6 +15,7 @@ class Enemy
 
 		@tick = 0
 
+
 	end
 
 	def update
@@ -27,16 +28,9 @@ class Enemy
 		
 	end
 
-	def move
+	def move 
 
-		move_val = rand(0..2)
-
-		if move_val == 0
-			@pos_x += 6
-		elsif move_val == 1
-			@pos_x -= 6
-		end
-				
+	
 
 	end
 
