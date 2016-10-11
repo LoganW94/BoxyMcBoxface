@@ -44,13 +44,6 @@ class Enemy
 		else
 			hunt(player_pos_x, player_pos_y)
 		end
-
-		
-	end
-
-	def move player_pos_x, player_pos_y
-
-
 		
 	end
 
@@ -90,14 +83,15 @@ class Enemy
 			elsif @pos_y <= player_pos_y
 				@pos_y += @mov_rt/2 	
 			end
-		else float
-						
+		else 
+			float			
 		end	
-			if @pos_x >= player_pos_x
-				@pos_x -= @mov_rt
-			elsif @pos_x <= player_pos_x
-				@pos_x += @mov_rt 	
-			end		
+		
+		if @pos_x >= player_pos_x
+			@pos_x -= @mov_rt
+		elsif @pos_x <= player_pos_x
+			@pos_x += @mov_rt 	
+		end	
 		
 
 	end

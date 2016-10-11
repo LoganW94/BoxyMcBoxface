@@ -10,9 +10,4 @@ class Ai
 
 	end
 
-	def pathfinder
-		
-
-	end
-
 end
