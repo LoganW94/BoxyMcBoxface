@@ -71,6 +71,8 @@ class Window < Gosu::Window
      
         @has_run = false
         @jump = false
+
+        @floor = 368
     
 ############################################################################## # hard code enemy stuff
 	
@@ -81,7 +83,6 @@ class Window < Gosu::Window
 
 		@gravity = 5
 		@player_move_rate = 4
-       
 
 	end
 
@@ -130,18 +131,14 @@ class Window < Gosu::Window
 			if @is_enemy == false
 				@enemy = Enemy.new
 				@enemy.pos_x = 700
-				@enemy.pos_y = 368
+				@enemy.pos_y = @floor
 				@is_enemy = true
 			end
 
-			@enemy.update
+			@enemy.update(@player_pos_x, @player_pos_y)
 
-
-
-			# player Code
-
-			
-			if @player_pos_y < 368 && @player_pos_y != 368
+			# player Code			
+			if @player_pos_y < @floor && @player_pos_y != @floor
 				@player_pos_y += @gravity
 			end
 
@@ -151,7 +148,7 @@ class Window < Gosu::Window
 				@new_game = @resume_game
 			end
 
-			if button_down?(Gosu::KbUp) && @new_press_up && @player_pos_y >= 368
+			if button_down?(Gosu::KbUp) && @new_press_up && @player_pos_y >= @floor
          		@jump = true         		                                
             end 
 
