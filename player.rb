@@ -3,17 +3,15 @@ require 'gosu'
 
 class Player
 
-    attr_accessor :name, :height, :width
+    attr_accessor :height, :width
 
 
 	def initialize
 
-		name = "Boxy McBoxface"
-		@image = Gosu::Image.new("player.png", false)
+		
+		@image = Gosu::Image.new("graphics/player.png", false)
 		height = @image.height
 		width = @image.width	
-
-		
 
 	end
 

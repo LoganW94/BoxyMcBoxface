@@ -8,9 +8,9 @@ class Background
 
 		@sun_init = 0
 
-		@back_image = Gosu::Image.new("boxy_background_1.bmp", false)
-		@sun = Gosu::Image.new("sun.bmp", false)
-		@temp =  Gosu::Image.new("temp_floor.bmp", false)
+		@back_image = Gosu::Image.new("graphics/boxy_background_1.bmp", false)
+		@sun = Gosu::Image.new("graphics/sun.bmp", false)
+		@temp =  Gosu::Image.new("graphics/temp_floor.bmp", false)
 		
 	end
 

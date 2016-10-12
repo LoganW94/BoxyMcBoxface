@@ -10,9 +10,9 @@ class Enemy
 
 		@pos_x = pos_x
 
-		@image = Gosu::Image.new("enemy.bmp", false)
-		height = @image.height
-		width = @image.width
+		@image = Gosu::Image.new("graphics/enemy.bmp", false)
+		@height = @image.height
+		@width = @image.width
 
 		@init_pos = 700
 

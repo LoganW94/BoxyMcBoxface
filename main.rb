@@ -4,6 +4,7 @@ require_relative 'player'
 require_relative 'methods'
 require_relative 'background'
 require_relative 'enemy'
+require_relative 'levelgenerator'
 
 class Window < Gosu::Window
 
@@ -20,6 +21,7 @@ class Window < Gosu::Window
 		@is_player = false
 		@is_background = false
 		@is_method = false
+		@is_level = false
 
 		@new_game_pos = height/3
 		@quit_game_pos = (height/3)*2
@@ -124,10 +126,14 @@ class Window < Gosu::Window
 ############################################################################## # game state	
 		elsif @state == 1
 
+
+
+			#add @player.update
+
 			@background.update
 
-
-			# enemy Code
+=begin
+			# temp enemy Code
 			if @is_enemy == false
 				@enemy = Enemy.new
 				@enemy.pos_x = 700
@@ -136,17 +142,14 @@ class Window < Gosu::Window
 			end
 
 			@enemy.update(@player_pos_x, @player_pos_y)
+=end
 
 			# player Code			
 			if @player_pos_y < @floor && @player_pos_y != @floor
 				@player_pos_y += @gravity
 			end
 
-			if button_down?(Gosu::KbEscape) && @new_press_escape
-				@state = 0
-				@dot_pos = @new_game_pos
-				@new_game = @resume_game
-			end
+			
 
 			if button_down?(Gosu::KbUp) && @new_press_up && @player_pos_y >= @floor
          		@jump = true         		                                
@@ -167,7 +170,7 @@ class Window < Gosu::Window
             	@level_tile_1 += @player_move_rate
             	@level_tile_2 += @player_move_rate
 
-            	@enemy.pos_x += @player_move_rate
+#            	@enemy.pos_x += @player_move_rate
             	             
             end
 
@@ -179,13 +182,19 @@ class Window < Gosu::Window
             	@level_tile_1 -= @player_move_rate
             	@level_tile_2 -= @player_move_rate
 
-            	@enemy.pos_x -= @player_move_rate
+#            	@enemy.pos_x -= @player_move_rate
             	                               
             end
 
             if button_down?(Gosu::KbReturn) && @new_press_enter
             	@state = 3
             end
+
+            if button_down?(Gosu::KbEscape) && @new_press_escape
+				@state = 0
+				@dot_pos = @new_game_pos
+				@new_game = @resume_game
+			end
 
             # background loop
 
@@ -231,15 +240,7 @@ class Window < Gosu::Window
 
 			@has_run = false
 
-			if @is_player == false
-				@player = Player.new
-				@is_player = true
-			end
 
-			if @is_background == false
-				@background = Background.new
-				@is_background = true
-			end
 
 
 			#@dot_pos = height/2 - 35
@@ -310,6 +311,22 @@ class Window < Gosu::Window
 				@dot_pos = @new_game_pos
 			end
 
+			if @is_level == false
+				@levelgen = LevelGenerator.new
+				@levelgen.level = @level
+				@is_level = true
+			end
+				
+			if @is_player == false
+				@player = Player.new
+				@is_player = true
+			end
+
+			if @is_background == false
+				@background = Background.new
+				@is_background = true
+			end
+
 
 ############################################################################## # end level state displays next level code
 		elsif @state == 3
@@ -329,6 +346,8 @@ class Window < Gosu::Window
 				@state = 0
 				@continue = false
 				@dot_pos = @new_game_pos
+				@is_player = false
+				@is_level = false
 			end
 
 		end	
@@ -355,11 +374,11 @@ class Window < Gosu::Window
 
 		elsif @state == 1
 
+			@player.draw(@player_pos_x, @player_pos_y)
+
 			if @is_enemy == true
 				@enemy.draw
 			end
-
-			@player.draw(@player_pos_x, @player_pos_y)
 
 			@background.draw_background(@back_tile_1, @back_pos_y)
 			@background.draw_background(@back_tile_2, @back_pos_y)
