@@ -75,7 +75,7 @@ class Enemy
 
 	end
 
-	def hunt player_pos_x, player_pos_y
+	def hunt player_pos_x, player_pos_y # move to Ai class at some point??
 
 		if @pos_y < @floor - 40
 			if @pos_y >= player_pos_y

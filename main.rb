@@ -149,8 +149,6 @@ class Window < Gosu::Window
 				@player_pos_y += @gravity
 			end
 
-			
-
 			if button_down?(Gosu::KbUp) && @new_press_up && @player_pos_y >= @floor
          		@jump = true         		                                
             end 
@@ -240,10 +238,6 @@ class Window < Gosu::Window
 
 			@has_run = false
 
-
-
-
-			#@dot_pos = height/2 - 35
 			@move_markx = 33
 
 
