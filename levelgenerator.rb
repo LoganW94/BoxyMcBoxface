@@ -24,9 +24,7 @@ class LevelGenerator
 
 	def loadlevel
 
-		@level_img = Gosu::Image.new("levels/level_temp.bmp", false) # make function to load the level bases on what level is passed through via @level
-
-		#interpret
+		
 
 	end
 
