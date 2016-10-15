@@ -1,4 +1,5 @@
 require 'gosu'
+require_relative 'rubyparse'
 
 
 class LevelGenerator
@@ -6,6 +7,8 @@ class LevelGenerator
 	attr_accessor :level, :player_start, :num_enemies, :goal, :width, :height
 
 	def initialize
+
+		@parse = Parse.new
 
 
 		loadlevel
@@ -24,7 +27,11 @@ class LevelGenerator
 
 	def loadlevel
 
-		
+		@level_file = File.open("./levels/level_1.txt", "r")
+
+		@data_hash = @parse.parse(@level_file)
+
+		@level_file.close
 
 	end
 
