@@ -30,7 +30,6 @@ class LevelGenerator
 	def loadlevel
 
 		file_location = "./levels/level_#{@level}.txt"
-		puts "file location: #{file_location}"
 
 		begin	
 			@level_file = File.open(file_location, "r")
@@ -47,6 +46,7 @@ class LevelGenerator
 	def loadgraphics
 
 		@tile
+		@goal
 
 	end
 
