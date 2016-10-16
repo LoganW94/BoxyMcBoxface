@@ -306,8 +306,7 @@ class Window < Gosu::Window
 			end
 
 			if @is_level == false
-				@levelgen = LevelGenerator.new
-				@levelgen.level = @level
+				@levelgen = LevelGenerator.new(@level)
 				@is_level = true
 			end
 				
