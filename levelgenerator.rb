@@ -1,5 +1,5 @@
 require 'gosu'
-require_relative 'rubyparse'
+require_relative 'parse'
 
 
 class LevelGenerator
