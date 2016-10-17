@@ -71,7 +71,6 @@ class Window < Gosu::Window
 	end
 
 	def update
-		@methods.update
 ############################################################################## # main menu state if no game in progress
 		if @state == 0 && @continue == false
             if button_down?(Gosu::KbUp) && @new_press_up
