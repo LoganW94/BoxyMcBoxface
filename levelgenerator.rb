@@ -1,10 +1,10 @@
 require 'gosu'
 require_relative 'parse'
-
+require_relative 'enemy'
 
 class LevelGenerator
 
-	attr_accessor :level, :player_x, :player_y, :num_enemies, :goal_x, :width, :height, :map
+	attr_accessor :level, :player_x, :player_y, :num_enemies, :map, :level_hash
 =begin
 		breaks up bmp and gives player_start, num_enemies, goal etc
 		! = enemy
@@ -23,7 +23,7 @@ class LevelGenerator
 		loadlevel
 		loadgraphics
 		interpret
-		puts "Enemies: #{num_enemies}\nGoal position: #{@goal_x}\nPlayer location: #{@player_x},#{@player_y} "
+		puts "Enemies: #{num_enemies}\nPlayer location: #{@player_x},#{@player_y} "
 	end
 
 	def loadlevel
@@ -40,14 +40,8 @@ class LevelGenerator
 	end
 
 	def loadgraphics
-		@tile = Gosu::Image.new("", false)
-		@goal = Gosu::Image.new("", false)
-	end
-
-	def generate
-	end
-
-	def populate
+		@tile = Gosu::Image.new("graphics/tile_3.png", false)
+		@goal = Gosu::Image.new("graphics/goal.bmp", false)
 	end
 
 	def interpret 
@@ -60,7 +54,6 @@ class LevelGenerator
 				elsif c == "@"
 					@player_x = pos_x
 					@player_y = pos_y
-
 				end 
 				pos_x += @tile_size
 			end
@@ -69,19 +62,18 @@ class LevelGenerator
 		end					
 	end
 
-	def draw pos_x, pos_y
+	def draw x, y
 		@map.each do |line|
 			line.each_char do |c|
 				if c == "*"
-					@tile.draw(pos_x, pos_y)
+					@tile.draw(x, y, 4)
 				elsif c == "?"
-					@goal_x = pos_x
-					@goal.draw(@goal_x)
+					@goal.draw(x, y, 3)
 				end
-				pos_x += @tile_size
+				x += @tile_size
 			end
-			pos_x = 0
-			pos_y += @tile_size	
+			x = 0
+			y += @tile_size	
 		end
 	end
 	

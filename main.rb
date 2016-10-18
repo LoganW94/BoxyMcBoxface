@@ -13,7 +13,7 @@ class Window < Gosu::Window
 	def initialize width = 800, height = 600, fullscreen = false
 		super
 		
-		self.caption = "****pre alpha version Boxy McBoxface****"
+		self.caption = "****pre alpha version Pumpkin Jack****"
 
 		@state = 0
 		@continue = false
@@ -23,15 +23,14 @@ class Window < Gosu::Window
 		@pos_x = width/4
 		@player_pos_x = width/2-32
 		@back_pos_x = 0
-		@level_X, @level_y = 0
+		@level_x = 0
+		@level_y = 0
 		@player_pos_y = 368
 		@back_pos_y = -100
 		@back_tile_1 = 0
 		@back_tile_2 = 800
-		@back_tile_3 = 1600
 		@level_tile_1 = 0
-		@level_tile_2 = 800
-		@level_tile_3 = 1600	
+		@level_tile_2 = 800	
 		@methods = Methods.new
 		@font = Gosu::Font.new(70)
 		@font_small = Gosu::Font.new(30)
@@ -55,8 +54,8 @@ class Window < Gosu::Window
 		@code_entry_four = 0	
 		@mark = "_"
 		@markx = 385
-        @level_one_code = "0000"    #replace with hash
-        @level_two_code = "5555"    #replace with hash
+        @level_one_code = "0000"    
+        @level_two_code = "5555"    
         @has_run = false
         @jump = false
         @floor = 368
@@ -91,28 +90,34 @@ class Window < Gosu::Window
 ############################################################################## # game state	
 		elsif @state == 1
 			@background.update
+		
+			#@player.pos_y += @gravity
 
-			# player Code			
-			
-			@player_pos_y += @gravity
-
-			if button_down?(Gosu::KbUp) && @new_press_up && @player_pos_y >= @floor
-         		@jump = true         		                                
+			if button_down?(Gosu::KbUp)
+				if ! in_air
+          			@player.jump
+          			in_air
+          		end	                                
             end 
-            if @jump == true
-            	@player_pos_y -= 10
-            end
-            @jump = @methods.jump(@jump)
+            if @player.pos_x <= 101
+            	@level_x += @player_move_rate
+            elsif @player.pos_x >= 699
+            	@level_x -= @player_move_rate
+            end	
             # player movement
 			if button_down?(Gosu::KbLeft)
-            	@back_tile_1 += 2
-            	@back_tile_2 += 2
-            	@level_x += @player_move_rate          	             
+            	@back_tile_1 += 0.5
+            	@back_tile_2 += 0.5
+            	if @player.pos_x > 100
+            		@player.move(-@player_move_rate)
+            	end        	             
             end
             if button_down?(Gosu::KbRight) 
-                @back_tile_1 -= 2
-            	@back_tile_2 -= 2
-            	@level_x -= @player_move_rate        	                               
+                @back_tile_1 -= 0.5
+            	@back_tile_2 -= 0.5
+            	if @player.pos_x < 700 
+            		@player.move(@player_move_rate.to_i)
+            	end       	                               
             end
             if button_down?(Gosu::KbReturn) && @new_press_enter
             	@state = 3
@@ -194,6 +199,8 @@ class Window < Gosu::Window
             if button_down?(Gosu::KbReturn) && @new_press_enter && @confirm == true
             	@levelgen = LevelGenerator.new(@level)
             	@player = Player.new
+            	@player.pos_x = @levelgen.player_x
+            	@player.pos_y = @levelgen.player_y
             	@background = Background.new
             	@state = 1
             	@continue = true
@@ -239,11 +246,11 @@ class Window < Gosu::Window
 			@font.draw("#{@quit_game}", @pos_x, @quit_game_pos, 1)
 			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
 		elsif @state == 1
-			@player.draw(@player_pos_x, @player_pos_y)
+			@player.draw
 			@background.draw_background(@back_tile_1, @back_pos_y)
 			@background.draw_background(@back_tile_2, @back_pos_y)
 			@background.draw_effects
-			@levelgen.draw()
+			@levelgen.draw(@level_x, @level_y)
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)
 			@font.draw("#{@Code_display}", 25, height/2, 1)
