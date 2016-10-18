@@ -4,7 +4,7 @@ require_relative 'parse'
 
 class LevelGenerator
 
-	attr_accessor :level, :player_x, :player_y, :num_enemies, :goal_x, :width, :height
+	attr_accessor :level, :player_x, :player_y, :num_enemies, :goal_x, :width, :height, :map
 =begin
 		breaks up bmp and gives player_start, num_enemies, goal etc
 		! = enemy
@@ -36,11 +36,12 @@ class LevelGenerator
 		rescue => e
 			puts e
 		end
+		@map = @level_hash["Map:"]
 	end
 
 	def loadgraphics
-		@tile
-		@goal
+		@tile = Gosu::Image.new("", false)
+		@goal = Gosu::Image.new("", false)
 	end
 
 	def generate
@@ -52,16 +53,14 @@ class LevelGenerator
 	def interpret 
 		pos_x = 0
 		pos_y = 0
-		map_array = @level_hash["Map:"]
-		map_array.each do |line|
+		@map.each do |line|
 			line.each_char do |c|
 				if c == "!"
 					@num_enemies +=1
 				elsif c == "@"
 					@player_x = pos_x
 					@player_y = pos_y
-				elsif c == "?"
-					@goal_x = pos_x
+
 				end 
 				pos_x += @tile_size
 			end
@@ -70,8 +69,20 @@ class LevelGenerator
 		end					
 	end
 
-	def draw
-		#pass graphics and positions into background class which will handle everything
+	def draw pos_x, pos_y
+		@map.each do |line|
+			line.each_char do |c|
+				if c == "*"
+					@tile.draw(pos_x, pos_y)
+				elsif c == "?"
+					@goal_x = pos_x
+					@goal.draw(@goal_x)
+				end
+				pos_x += @tile_size
+			end
+			pos_x = 0
+			pos_y += @tile_size	
+		end
 	end
 	
 end

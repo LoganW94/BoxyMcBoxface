@@ -13,20 +13,17 @@ class Window < Gosu::Window
 	def initialize width = 800, height = 600, fullscreen = false
 		super
 		
-		self.caption = "****pre pre pre pre pre alpha version Boxy McBoxface****"
+		self.caption = "****pre alpha version Boxy McBoxface****"
 
 		@state = 0
 		@continue = false
-		@is_player = false
-		@is_background = false
-		@is_method = false
-		@is_level = false
 		@new_game_pos = height/3
 		@quit_game_pos = (height/3)*2
 		@dot_pos = @new_game_pos
 		@pos_x = width/4
 		@player_pos_x = width/2-32
 		@back_pos_x = 0
+		@level_X, @level_y = 0
 		@player_pos_y = 368
 		@back_pos_y = -100
 		@back_tile_1 = 0
@@ -93,22 +90,12 @@ class Window < Gosu::Window
 			end
 ############################################################################## # game state	
 		elsif @state == 1
-			#add @player.update
 			@background.update
-=begin
-			# temp enemy Code
-			if @is_enemy == false
-				@enemy = Enemy.new
-				@enemy.pos_x = 700
-				@enemy.pos_y = @floor
-				@is_enemy = true
-			end
-			@enemy.update(@player_pos_x, @player_pos_y)
-=end
+
 			# player Code			
-			if @player_pos_y < @floor && @player_pos_y != @floor
-				@player_pos_y += @gravity
-			end
+			
+			@player_pos_y += @gravity
+
 			if button_down?(Gosu::KbUp) && @new_press_up && @player_pos_y >= @floor
          		@jump = true         		                                
             end 
@@ -120,16 +107,12 @@ class Window < Gosu::Window
 			if button_down?(Gosu::KbLeft)
             	@back_tile_1 += 2
             	@back_tile_2 += 2
-            	@level_tile_1 += @player_move_rate
-            	@level_tile_2 += @player_move_rate
-#            	@enemy.pos_x += @player_move_rate          	             
+            	@level_x += @player_move_rate          	             
             end
             if button_down?(Gosu::KbRight) 
                 @back_tile_1 -= 2
             	@back_tile_2 -= 2
-            	@level_tile_1 -= @player_move_rate
-            	@level_tile_2 -= @player_move_rate
-#            	@enemy.pos_x -= @player_move_rate           	                               
+            	@level_x -= @player_move_rate        	                               
             end
             if button_down?(Gosu::KbReturn) && @new_press_enter
             	@state = 3
@@ -141,9 +124,7 @@ class Window < Gosu::Window
 			end
             # background loop
             @back_tile_1 = @methods.tile_move(@back_tile_1)
-        	@back_tile_2 = @methods.tile_move(@back_tile_2)       
-        	@level_tile_1 = @methods.tile_move(@level_tile_1)
-        	@level_tile_2 = @methods.tile_move(@level_tile_2)		
+        	@back_tile_2 = @methods.tile_move(@back_tile_2)       		
 ############################################################################## # main menu if game in progress
 		elsif @state == 0 && @continue == true 
             if button_down?(Gosu::KbUp) && @new_press_up
@@ -211,6 +192,9 @@ class Window < Gosu::Window
 				@confirm = false
 			end				
             if button_down?(Gosu::KbReturn) && @new_press_enter && @confirm == true
+            	@levelgen = LevelGenerator.new(@level)
+            	@player = Player.new
+            	@background = Background.new
             	@state = 1
             	@continue = true
 
@@ -219,18 +203,6 @@ class Window < Gosu::Window
 				@state = 0
 				@continue = false
 				@dot_pos = @new_game_pos
-			end
-			if @is_level == false
-				@levelgen = LevelGenerator.new(@level)
-				@is_level = true
-			end
-			if @is_player == false
-				@player = Player.new
-				@is_player = true
-			end
-			if @is_background == false
-				@background = Background.new
-				@is_background = true
 			end
 ############################################################################## # end level state displays next level code
 		elsif @state == 3
@@ -268,14 +240,10 @@ class Window < Gosu::Window
 			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
 		elsif @state == 1
 			@player.draw(@player_pos_x, @player_pos_y)
-			if @is_enemy == true
-				@enemy.draw
-			end
 			@background.draw_background(@back_tile_1, @back_pos_y)
 			@background.draw_background(@back_tile_2, @back_pos_y)
-			@background.draw_level(@level_tile_1, @back_pos_y)
-			@background.draw_level(@level_tile_2, @back_pos_y)
 			@background.draw_effects
+			@levelgen.draw()
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)
 			@font.draw("#{@Code_display}", 25, height/2, 1)
