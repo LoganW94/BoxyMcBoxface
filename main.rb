@@ -13,7 +13,7 @@ class Window < Gosu::Window
 	def initialize width = 800, height = 600, fullscreen = false
 		super
 		
-		self.caption = "****pre alpha version Pumpkin Jack****"
+		self.caption = "****pre alpha Pumpkin Jack****"
 
 		@state = 0
 		@continue = false
@@ -21,16 +21,12 @@ class Window < Gosu::Window
 		@quit_game_pos = (height/3)*2
 		@dot_pos = @new_game_pos
 		@pos_x = width/4
-		@player_pos_x = width/2-32
 		@back_pos_x = 0
 		@level_x = 0
 		@level_y = 0
-		@player_pos_y = 368
 		@back_pos_y = -100
 		@back_tile_1 = 0
 		@back_tile_2 = 800
-		@level_tile_1 = 0
-		@level_tile_2 = 800	
 		@methods = Methods.new
 		@font = Gosu::Font.new(70)
 		@font_small = Gosu::Font.new(30)
@@ -46,7 +42,7 @@ class Window < Gosu::Window
         @new_press_space, 
         @new_press_escape, 
         @new_press_tab = false
-        @level = 1
+        @level = 0
 		@confirm = false	
 		@code_entry_one = 0
 		@code_entry_two = 0
@@ -54,16 +50,12 @@ class Window < Gosu::Window
 		@code_entry_four = 0	
 		@mark = "_"
 		@markx = 385
-        @level_one_code = "0000"    
-        @level_two_code = "5555"    
+        @level_code = ["0000", "5555", "9879", "3482" ]   
+        
         @has_run = false
         @jump = false
         @floor = 368
-############################################################################## # hard code enemy stuff
-		@is_enemy = false
-############################################################################## #physics variables here
 		@gravity = 5
-		@player_move_rate = 4
 	end
 
 	def update
@@ -89,34 +81,30 @@ class Window < Gosu::Window
 			end
 ############################################################################## # game state	
 		elsif @state == 1
-			@background.update
-		
+			#@background.update
+			@player.update
 			#@player.pos_y += @gravity
-
+			in_air = false
 			if button_down?(Gosu::KbUp)
 				if ! in_air
-          			@player.jump
+          			@player.jump(@player.move_rate)
           			in_air
           		end	                                
             end 
-            if @player.pos_x <= 101
-            	@level_x += @player_move_rate
-            elsif @player.pos_x >= 699
-            	@level_x -= @player_move_rate
+            if @player.pos_x <= 201
+            	@level_x += @player.move_rate
+            elsif @player.pos_x >= 599
+            	@level_x -= @player.move_rate
             end	
             # player movement
 			if button_down?(Gosu::KbLeft)
-            	@back_tile_1 += 0.5
-            	@back_tile_2 += 0.5
-            	if @player.pos_x > 100
-            		@player.move(-@player_move_rate)
+            	if @player.pos_x > 200
+            		@player.move(-@player.move_rate)
             	end        	             
             end
             if button_down?(Gosu::KbRight) 
-                @back_tile_1 -= 0.5
-            	@back_tile_2 -= 0.5
-            	if @player.pos_x < 700 
-            		@player.move(@player_move_rate.to_i)
+            	if @player.pos_x < 600 
+            		@player.move(@player.move_rate.to_i)
             	end       	                               
             end
             if button_down?(Gosu::KbReturn) && @new_press_enter
@@ -126,10 +114,7 @@ class Window < Gosu::Window
 				@state = 0
 				@dot_pos = @new_game_pos
 				@new_game = @resume_game
-			end
-            # background loop
-            @back_tile_1 = @methods.tile_move(@back_tile_1)
-        	@back_tile_2 = @methods.tile_move(@back_tile_2)       		
+			end     		
 ############################################################################## # main menu if game in progress
 		elsif @state == 0 && @continue == true 
             if button_down?(Gosu::KbUp) && @new_press_up
@@ -183,13 +168,8 @@ class Window < Gosu::Window
             @code = "#{@code_entry_one}#{@code_entry_two}#{@code_entry_three}#{@code_entry_four}"
 			@Code_display = "Level Code: #{@code_entry_one}#{@code_entry_two}#{@code_entry_three}#{@code_entry_four}"
 			#replace with hash
-			if @code == @level_one_code
-				@level = 1
-				@display = "Press Enter to play level: #{@level}"
-				@confirm = true
-			elsif @code == @level_two_code
-				@level = 2
-				@display = "Press Enter to play level: #{@level}"
+			if @code == @level_code[@level]
+				@display = "Press Enter to play level: #{@level+1}"
 				@confirm = true
 			else
 				@display = "Enter level code"
@@ -201,10 +181,9 @@ class Window < Gosu::Window
             	@player = Player.new
             	@player.pos_x = @levelgen.player_x
             	@player.pos_y = @levelgen.player_y
-            	@background = Background.new
+            	#@background = Background.new
             	@state = 1
             	@continue = true
-
             end
             if button_down?(Gosu::KbEscape) && @new_press_escape
 				@state = 0
@@ -213,20 +192,14 @@ class Window < Gosu::Window
 			end
 ############################################################################## # end level state displays next level code
 		elsif @state == 3
-			if @has_run == false
-				@next_level = @level + 1
-				@has_run = true
-			end
-			#check @next_level against hash and return code
-			@next_level_code = 5555
+			@next_level = @level + 1
+			@next_level_code = @level_code[@level+1]
 			@temp_end_text = "You beat level: #{@level}!!"
 			@temp_end_text_2 = "Level: #{@next_level} code is: #{@next_level_code}"	
             if button_down?(Gosu::KbEscape) && @new_press_escape
 				@state = 0
 				@continue = false
 				@dot_pos = @new_game_pos
-				@is_player = false
-				@is_level = false
 			end
 		end	
 ############################################################################## # other stuff to update
@@ -247,9 +220,6 @@ class Window < Gosu::Window
 			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
 		elsif @state == 1
 			@player.draw
-			@background.draw_background(@back_tile_1, @back_pos_y)
-			@background.draw_background(@back_tile_2, @back_pos_y)
-			@background.draw_effects
 			@levelgen.draw(@level_x, @level_y)
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)

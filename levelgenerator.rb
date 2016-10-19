@@ -23,11 +23,10 @@ class LevelGenerator
 		loadlevel
 		loadgraphics
 		interpret
-		puts "Enemies: #{num_enemies}\nPlayer location: #{@player_x},#{@player_y} "
 	end
 
 	def loadlevel
-		file_location = "./levels/level_#{@level}.txt"
+		file_location = "./levels/level_#{@level+1}.txt"
 		@level_hash = {}
 		begin	
 			@level_file = File.open(file_location, "r")
@@ -63,16 +62,17 @@ class LevelGenerator
 	end
 
 	def draw x, y
+		x_init = x
 		@map.each do |line|
 			line.each_char do |c|
 				if c == "*"
 					@tile.draw(x, y, 4)
 				elsif c == "?"
-					@goal.draw(x, y, 3)
+					@goal.draw(x, y-224, 3)
 				end
 				x += @tile_size
 			end
-			x = 0
+			x = x_init
 			y += @tile_size	
 		end
 	end

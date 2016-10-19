@@ -5,7 +5,6 @@ class Background
 
 	def initialize
 		@sun_init = 0
-		@back_image = Gosu::Image.new("graphics/boxy_background_1.bmp", false)
 		@sun = Gosu::Image.new("graphics/sun.bmp", false)
 	end
 
@@ -14,6 +13,7 @@ class Background
 	end
 
 	def draw_background pos_x, pos_y
+		draw_effect
 		@back_image.draw(pos_x, pos_y, 1)	
 	end
 
