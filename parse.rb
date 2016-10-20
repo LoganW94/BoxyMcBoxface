@@ -11,7 +11,6 @@ class Parse
 		file_hash = {}
 		key_list = []
 		value_list = []
-		#line_num = 1
 		last_line = file_list.size
 		file_list.each do |current_line|			
 			key = find_key(current_line)

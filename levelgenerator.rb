@@ -4,7 +4,7 @@ require_relative 'enemy'
 
 class LevelGenerator
 
-	attr_accessor :level, :player_x, :player_y, :num_enemies, :map, :level_hash
+	attr_accessor :level, :player_x, :player_y, :num_enemies, :map, :level_hash, :tile_size, :tiled_map
 =begin
 		breaks up bmp and gives player_start, num_enemies, goal etc
 		! = enemy
@@ -16,13 +16,11 @@ class LevelGenerator
 	def initialize level
 		@tile_size = 32
 		@level = level
-		@player_x = 0
-		@player_y = 0
 		@num_enemies = 0
-		@goal_x = 0
 		loadlevel
 		loadgraphics
 		interpret
+		create_tiles
 	end
 
 	def loadlevel
@@ -39,8 +37,34 @@ class LevelGenerator
 	end
 
 	def loadgraphics
-		@tile = Gosu::Image.new("graphics/tile_3.png", false)
-		@goal = Gosu::Image.new("graphics/goal.bmp", false)
+		@tile_img = Gosu::Image.new("graphics/tile_3.png", false)
+		@goal_img = Gosu::Image.new("graphics/goal.bmp", false)
+	end
+
+	def create_tiles
+		x=0
+		y=0
+		@tiled_map = []
+		@map.each do |line|
+			line.each_char do |c|
+				tile = Tile.new
+				tile.x = x
+				tile.y = y
+				tile.char = c
+				if tile.char == "*"
+					tile.is_tile = true
+					tile.image = @tile_img
+				elsif tile.char == "#", "!", "@"
+					tile.is_tile = false
+				elsif tile.char == "?"
+					tile.is_tile = false
+					tile.image = @goal_img
+				end		
+				x += @tile_size
+				@tiled_map << tile
+			end
+			y += @tile_size
+		end
 	end
 
 	def interpret 
@@ -63,13 +87,11 @@ class LevelGenerator
 
 	def draw x, y
 		x_init = x
+		i = 0
 		@map.each do |line|
 			line.each_char do |c|
-				if c == "*"
-					@tile.draw(x, y, 4)
-				elsif c == "?"
-					@goal.draw(x, y-224, 3)
-				end
+				tile = @tiled_map[i]
+				tile.update(x, y)
 				x += @tile_size
 			end
 			x = x_init
