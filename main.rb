@@ -51,16 +51,15 @@ class Window < Gosu::Window
 		@mark = "_"
 		@markx = 385
         @level_code = ["0000", "5555", "9879", "3482" ]   
-        
+        @tile_size = 32
         @has_run = false
         @jump = false
         @floor = 368
-		@gravity = 5
+        @move_rate = 3
 	end
 
 	def update
-############################################################################## # main menu state if no game in progress
-		if @state == 0 && @continue == false
+		if @state == 0 && @continue == false  ############################################################################## # main menu state if no game in progress
             if button_down?(Gosu::KbUp) && @new_press_up
  				@dot_pos = @new_game_pos
             	if @dot_pos == @quit_game_pos
@@ -79,44 +78,37 @@ class Window < Gosu::Window
 					self.close
 				end						
 			end
-############################################################################## # game state	
-		elsif @state == 1
-			#@background.update
-			@player.update
-			#@player.pos_y += @gravity
+		elsif @state == 1 ############################################################################## # game state	
+			@player.update(@levelgen.tiled_map)
 			in_air = false
-			if button_down?(Gosu::KbUp)
-				if ! in_air
-          			@player.jump(@player.move_rate)
-          			in_air
-          		end	                                
+			if button_down?(Gosu::KbUp) && @new_press_up
+          		@player.jump               
             end 
             if @player.pos_x <= 201
-            	@level_x += @player.move_rate
+            	@level_x += @player.rate
             elsif @player.pos_x >= 599
-            	@level_x -= @player.move_rate
+            	@level_x -= @player.rate
             end	
             # player movement
 			if button_down?(Gosu::KbLeft)
             	if @player.pos_x > 200
-            		@player.move(-@player.move_rate)
+            		@player.move_left
             	end        	             
             end
             if button_down?(Gosu::KbRight) 
             	if @player.pos_x < 600 
-            		@player.move(@player.move_rate.to_i)
+            		@player.move_right
             	end       	                               
             end
             if button_down?(Gosu::KbReturn) && @new_press_enter
-            	@state = 3
+            	@player.pos_x >= @levelgen.
             end
             if button_down?(Gosu::KbEscape) && @new_press_escape
 				@state = 0
 				@dot_pos = @new_game_pos
 				@new_game = @resume_game
 			end     		
-############################################################################## # main menu if game in progress
-		elsif @state == 0 && @continue == true 
+		elsif @state == 0 && @continue == true ############################################################################## # main menu if game in progress
             if button_down?(Gosu::KbUp) && @new_press_up
  				@dot_pos = @new_game_pos
             	if @dot_pos == @quit_game_pos
@@ -135,8 +127,7 @@ class Window < Gosu::Window
 					self.close
 				end						
 			end	
-############################################################################## # level select
-		elsif @state == 2
+		elsif @state == 2 ############################################################################## # level select
 			@has_run = false
 			@move_markx = 33
 			if button_down?(Gosu::KbLeft) &&  @new_press_left && @markx != 385
@@ -181,7 +172,8 @@ class Window < Gosu::Window
             	@player = Player.new
             	@player.pos_x = @levelgen.player_x
             	@player.pos_y = @levelgen.player_y
-            	#@background = Background.new
+            	@player.size = @tile_size
+            	@player.rate = @move_rate
             	@state = 1
             	@continue = true
             end
@@ -190,8 +182,7 @@ class Window < Gosu::Window
 				@continue = false
 				@dot_pos = @new_game_pos
 			end
-############################################################################## # end level state displays next level code
-		elsif @state == 3
+		elsif @state == 3 ############################################################################## # end level state displays next level code
 			@next_level = @level + 1
 			@next_level_code = @level_code[@level+1]
 			@temp_end_text = "You beat level: #{@level}!!"
@@ -202,8 +193,7 @@ class Window < Gosu::Window
 				@dot_pos = @new_game_pos
 			end
 		end	
-############################################################################## # other stuff to update
-		@new_press_enter = !button_down?(Gosu::KbReturn)
+		@new_press_enter = !button_down?(Gosu::KbReturn) ############################################################################## # other stuff to update
 		@new_press_up= !button_down?(Gosu::KbUp)
 		@new_press_down = !button_down?(Gosu::KbDown)        
         @new_press_left = !button_down?(Gosu::KbLeft)

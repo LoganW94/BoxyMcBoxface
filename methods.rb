@@ -16,7 +16,6 @@ class Methods
 		return tile
 	end
 
-	def collision 
-	end
+	
 
 end
