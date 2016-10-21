@@ -1,13 +1,14 @@
 
 class Shape
 
-attr_accessor :x, :y, :X, :Y, :height, :width, :r
+attr_accessor :x, :y, :x2, :y2, :height, :width, :r
 
-	def rect x, y, X, Y, height, width
+	def rect x, y, height, width
+		@size = 32
 		@x = x
 		@y = y
-		@X = X
-		@Y = Y
+		@x2 = x + @size
+		@y2 = y + @size
 		@height = height
 		@width = width
 	end
@@ -20,7 +21,7 @@ attr_accessor :x, :y, :X, :Y, :height, :width, :r
 
 	def scale scaler
 		scale_xy(scaler)
-		scale_XY(scaler)
+		scale_xy2(scaler)
 	end
 
 	def scale_xy scaler
@@ -30,11 +31,11 @@ attr_accessor :x, :y, :X, :Y, :height, :width, :r
 		@y = ((@y + scale_y)/2)
 	end
 
-	def scale_XY
-		scale_X = @X * scaler
-		scale_Y = @Y * scaler
-		@X = ((@X + scale_x)/2)
-		@Y = ((@Y + scale_y)/2)
+	def scale_xy2 scaler
+		scale_x2 = @x2 * scaler
+		scale_y2 = @y2 * scaler
+		@x2 = ((@x2 + scale_x2)/2)
+		@y2 = ((@y2 + scale_y2)/2)
 	end
 
 end

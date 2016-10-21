@@ -2,30 +2,25 @@
 
 class Tile
 	
-	attr_accessor :x, :y, :X, :Y, :is_tile, :char, :image
+	attr_accessor :x, :y, :x2, :y2, :is_tile, :char, :image
 
-	def initialize
+	def initialize x, y, char
 		@size = 32
-		X
-		Y
+		@x = x
+		@y = y
+		@y2 = @y + @size
+		@x2 = @x + @size
+		@char = char
 	end
 
 	def update x, y
 		@X = x
 		@y = y
-		X
-		Y
+		@y2 = @y + @size
+		@x2 = @x + @size
 		if is_tile
 			draw
 		end
-	end
-
-	def X
-		@X = @x + @size
-	end
-
-	def Y
-		@Y = @y + @size
 	end
 
 	def draw

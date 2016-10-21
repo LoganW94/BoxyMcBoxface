@@ -47,20 +47,20 @@ class Player
 	end
 
 	def collision tiles
-		@pX = @pos_x + @size
-		@pY = @pos_y + @size
+		px2 = @pos_x + @size
+		py2 = @pos_y + @size
 		tiles.each do |tile|
 			if tile.char == "*"
-				if @pX < tile.x
+				if px2 < tile.x
 					@can_move_right = false
 				end
-				if tile.X < @pos_x
+				if tile.x2 < @pos_x
 					@can_move_left = false
 				end
-				if @pY < tile.y
+				if py2 < tile.y
 					@can_jump = true
 				end
-				if @pY > tile.y 
+				if py2 > tile.y 
 					gravity
 				end
 			end	
@@ -71,10 +71,11 @@ class Player
 		# locates the tiles around player and returns that array of tile obj
 		tiles = []
 		rect = Shape.new
-		rect.rect(@pos_x, @pos_y, @pX, @pY, 32, 32)
-		rect.scale(2)
+		rect.rect(@pos_x, @pos_y, 32, 32)
+		#rect.scale(2)
+		
 		map.each do |tile|
-			if rect.X < tile.x or tile.X < rect.x or rect.Y < tile.y or tile.Y < rect.y
+			if rect.x2 < tile.x or tile.x2 < rect.x or rect.y2 < tile.y or tile.y2 < rect.y
 				tiles << tile
 			end
 		end

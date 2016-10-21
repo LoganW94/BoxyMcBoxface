@@ -80,7 +80,6 @@ class Window < Gosu::Window
 			end
 		elsif @state == 1 ############################################################################## # game state	
 			@player.update(@levelgen.tiled_map)
-			in_air = false
 			if button_down?(Gosu::KbUp) && @new_press_up
           		@player.jump               
             end 
@@ -101,7 +100,7 @@ class Window < Gosu::Window
             	end       	                               
             end
             if button_down?(Gosu::KbReturn) && @new_press_enter
-            	@player.pos_x >= @levelgen.
+            	@player.pos_x >= @levelgen.goal_x
             end
             if button_down?(Gosu::KbEscape) && @new_press_escape
 				@state = 0

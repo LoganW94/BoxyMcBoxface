@@ -1,10 +1,11 @@
 require 'gosu'
 require_relative 'parse'
 require_relative 'enemy'
+require_relative 'tile'
 
 class LevelGenerator
 
-	attr_accessor :level, :player_x, :player_y, :num_enemies, :map, :level_hash, :tile_size, :tiled_map
+	attr_accessor :level, :player_x, :player_y, :num_enemies, :map, :level_hash, :tile_size, :tiled_map, :goal_x
 =begin
 		breaks up bmp and gives player_start, num_enemies, goal etc
 		! = enemy
@@ -47,14 +48,11 @@ class LevelGenerator
 		@tiled_map = []
 		@map.each do |line|
 			line.each_char do |c|
-				tile = Tile.new
-				tile.x = x
-				tile.y = y
-				tile.char = c
+				tile = Tile.new(x, y, c)
 				if tile.char == "*"
 					tile.is_tile = true
 					tile.image = @tile_img
-				elsif tile.char == "#", "!", "@"
+				elsif tile.char == "#" or tile.char == "!" or tile.char == "@"
 					tile.is_tile = false
 				elsif tile.char == "?"
 					tile.is_tile = false
@@ -68,35 +66,39 @@ class LevelGenerator
 	end
 
 	def interpret 
-		pos_x = 0
-		pos_y = 0
+		x = 0
+		y = 0
 		@map.each do |line|
 			line.each_char do |c|
 				if c == "!"
 					@num_enemies +=1
+				elsif c == "?"
+					@goal_x = x						
 				elsif c == "@"
-					@player_x = pos_x
-					@player_y = pos_y
+					@player_x = x
+					@player_y = y
 				end 
-				pos_x += @tile_size
+				x += @tile_size
 			end
-			pos_x = 0
-			pos_y += @tile_size			
+			x = 0
+			y += @tile_size			
 		end					
 	end
 
 	def draw x, y
 		x_init = x
-		i = 0
-		@map.each do |line|
-			line.each_char do |c|
-				tile = @tiled_map[i]
-				tile.update(x, y)
-				x += @tile_size
-			end
-			x = x_init
-			y += @tile_size	
-		end
+  		@map.each do |line|
+  			line.each_char do |c|
+  				if c == "*"
+  					@tile_img.draw(x, y, 4)
+  				elsif c == "?"
+ 					@goal_img.draw(x, y-224, 3)
+  				end
+  				x += @tile_size
+  			end
+ 			x = x_init
+  			y += @tile_size
+  		end	
 	end
 	
 end
