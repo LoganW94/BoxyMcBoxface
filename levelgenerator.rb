@@ -40,6 +40,7 @@ class LevelGenerator
 	def loadgraphics
 		@tile_img = Gosu::Image.new("graphics/tile_3.png", false)
 		@goal_img = Gosu::Image.new("graphics/goal.bmp", false)
+		@nil_img = Gosu::Image.new("graphics/tile_nil.bmp", false)
 	end
 
 	def create_tiles
@@ -55,6 +56,7 @@ class LevelGenerator
 					tile.image = @tile_img
 				elsif tile.char == "#" or tile.char == "!" or tile.char == "@"
 					tile.is_tile = false
+					tile.image = @nil_img
 				elsif tile.char == "?"
 					tile.is_tile = false
 					tile.image = @goal_img
@@ -66,7 +68,6 @@ class LevelGenerator
 			x = 0
 			y += @tile_size
 		end
-		puts @tiled_map
 	end
 
 	def interpret 
@@ -89,21 +90,13 @@ class LevelGenerator
 		end					
 	end
 
-	def draw x, y, px, py
-		x_init = x
-		#@tiled_map.each {|t| t.update(x, y, px, py)}
-  		@map.each do |line|
-  			line.each_char do |c|
-  				if c == "*"
-  					@tile_img.draw(x, y, 4)
-  				elsif c == "?"
- 					@goal_img.draw(x, y-224, 3)
-  				end
-  				x += @tile_size
-  			end
- 			x = x_init
-  			y += @tile_size
-  		end	
+	def draw
+  		@tiled_map.each do |r| 
+			r.each do |tile|
+
+				tile.draw
+			end
+		end	
 	end
 	
 end

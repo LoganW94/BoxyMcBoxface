@@ -19,7 +19,7 @@ class Tile
 		@y = y
 		@y2 = @y + @size
 		@x2 = @x + @size
-		collision(px, py)
+		#collision(px, py)
 	end
 
 	def collision px, py
