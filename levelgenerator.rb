@@ -16,7 +16,7 @@ class LevelGenerator
 =end
 	def initialize level
 		@tile_size = 32
-		@level = level
+		@level = level + 1
 		@num_enemies = 0
 		loadlevel
 		loadgraphics
@@ -25,7 +25,7 @@ class LevelGenerator
 	end
 
 	def loadlevel
-		file_location = "./levels/level_#{@level+1}.txt"
+		file_location = "./levels/level_#{@level}.txt"
 		@level_hash = {}
 		begin	
 			@level_file = File.open(file_location, "r")
@@ -45,6 +45,7 @@ class LevelGenerator
 	def create_tiles
 		x=0
 		y=0
+		row=[]
 		@tiled_map = []
 		@map.each do |line|
 			line.each_char do |c|
@@ -57,12 +58,15 @@ class LevelGenerator
 				elsif tile.char == "?"
 					tile.is_tile = false
 					tile.image = @goal_img
-				end		
+				end	
 				x += @tile_size
-				@tiled_map << tile
+				row << (tile)
 			end
+			@tiled_map << row
+			x = 0
 			y += @tile_size
 		end
+		puts @tiled_map
 	end
 
 	def interpret 
@@ -85,8 +89,9 @@ class LevelGenerator
 		end					
 	end
 
-	def draw x, y
+	def draw x, y, px, py
 		x_init = x
+		#@tiled_map.each {|t| t.update(x, y, px, py)}
   		@map.each do |line|
   			line.each_char do |c|
   				if c == "*"

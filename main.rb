@@ -83,19 +83,19 @@ class Window < Gosu::Window
 			if button_down?(Gosu::KbUp) && @new_press_up
           		@player.jump               
             end 
-            if @player.pos_x <= 201
+            if @player.pos_x <= 301
             	@level_x += @player.rate
-            elsif @player.pos_x >= 599
+            elsif @player.pos_x >= 499
             	@level_x -= @player.rate
             end	
             # player movement
 			if button_down?(Gosu::KbLeft)
-            	if @player.pos_x > 200
+            	if @player.pos_x > 300
             		@player.move_left
             	end        	             
             end
             if button_down?(Gosu::KbRight) 
-            	if @player.pos_x < 600 
+            	if @player.pos_x < 500 
             		@player.move_right
             	end       	                               
             end
@@ -209,7 +209,7 @@ class Window < Gosu::Window
 			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
 		elsif @state == 1
 			@player.draw
-			@levelgen.draw(@level_x, @level_y)
+			@levelgen.draw(@level_x, @level_y, @player.pos_x, @player.pos_y)
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)
 			@font.draw("#{@Code_display}", 25, height/2, 1)

@@ -14,8 +14,8 @@ class Player
 	end
 
 	def update map
-		@tiles = local_tiles(map)
-		collision(@tiles)
+		collision(map)
+		gravity
 	end
 
 	def move_right
@@ -34,7 +34,7 @@ class Player
 		frames = 12
 		if @can_jump == true
 			while @counter != frames
-				@pos_y -= 2
+				@pos_y -= 7
 				@counter+=1
 			end
 			@counter = 0
@@ -43,42 +43,18 @@ class Player
 	end
 
 	def gravity
-		@pos_y + 5
+		@pos_y += 0.5
 	end
 
-	def collision tiles
-		px2 = @pos_x + @size
-		py2 = @pos_y + @size
-		tiles.each do |tile|
-			if tile.char == "*"
-				if px2 < tile.x
-					@can_move_right = false
-				end
-				if tile.x2 < @pos_x
-					@can_move_left = false
-				end
-				if py2 < tile.y
-					@can_jump = true
-				end
-				if py2 > tile.y 
-					gravity
-				end
-			end	
-		end				
+	def collision map
+		local_tiles(map)
+
 	end
 
 	def local_tiles map
-		# locates the tiles around player and returns that array of tile obj
-		tiles = []
-		rect = Shape.new
-		rect.rect(@pos_x, @pos_y, 32, 32)
-		#rect.scale(2)
+		# find the index of the tile player's x,y is in
+		# then get the non-air tiles from the 8 surrounding the tile at x,y
 		
-		map.each do |tile|
-			if rect.x2 < tile.x or tile.x2 < rect.x or rect.y2 < tile.y or tile.y2 < rect.y
-				tiles << tile
-			end
-		end
 	end
 
 	def draw
