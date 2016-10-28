@@ -1,6 +1,5 @@
 require 'gosu'
 require_relative 'parse'
-require_relative 'enemy'
 require_relative 'tile'
 
 class LevelGenerator

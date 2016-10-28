@@ -1,5 +1,4 @@
 
-
 class Tile
 	
 	attr_accessor :x, :y, :x2, :y2, :is_tile, :char, :image, :collide

@@ -1,7 +1,6 @@
 require 'gosu'
 
 require_relative 'player'
-require_relative 'methods'
 require_relative 'background'
 require_relative 'enemy'
 require_relative 'levelgenerator'
@@ -27,7 +26,6 @@ class Window < Gosu::Window
 		@back_pos_y = -100
 		@back_tile_1 = 0
 		@back_tile_2 = 800
-		@methods = Methods.new
 		@font = Gosu::Font.new(70)
 		@font_small = Gosu::Font.new(30)
 		@dot = "@"
