@@ -79,7 +79,7 @@ class Window < Gosu::Window
 			end
 		elsif @state == 1 ############################################################################## # game state	
 			
-			@player.update
+			@player.update(@levelgen.tiled_map)
 			
             # player movement
             if button_down?(Gosu::KbUp)# && @new_press_up
@@ -168,6 +168,7 @@ class Window < Gosu::Window
             	@player.pos_y = @levelgen.player_y
             	@player.size = @tile_size
             	@player.rate = @move_rate
+            	@player.player_index = @levelgen.init_player_index
             	@state = 1
             	@continue = true
             end

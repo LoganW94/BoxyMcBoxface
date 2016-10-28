@@ -2,18 +2,25 @@ require 'gosu'
 
 class Player
 
-    attr_accessor :pos_x, :pos_y, :rate, :size
+    attr_accessor :pos_x, :pos_y, :rate, :size, :player_index
 
 	def initialize		
 		@image = Gosu::Image.new("graphics/pumpkin_jack.bmp", false)
-		@counter = 0
-		@can_jump = true
-		@can_move_right = true
-		@can_move_left = true
 	end
 
-	def update
+	def update map
+		find_index(map)
+		collision(map)
 		gravity
+	end
+	def find_index map
+		#finds the current index of player on map array
+		
+	end
+
+	def collision map
+		#gets the tiled tiles left, right, and center, for the rows above, below, and on the level of player index.
+		
 	end
 
 	def jump

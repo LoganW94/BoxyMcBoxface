@@ -4,7 +4,7 @@ require_relative 'tile'
 
 class LevelGenerator
 
-	attr_accessor :level, :player_x, :player_y, :num_enemies, :map, :level_hash, :tile_size, :tiled_map, :goal_x
+	attr_accessor :level, :player_x, :player_y, :num_enemies, :map, :level_hash, :tile_size, :tiled_map, :goal_x, :init_player_index
 =begin
 		breaks up bmp and gives player_start, num_enemies, goal etc
 		! = enemy
@@ -59,6 +59,8 @@ class LevelGenerator
 				elsif tile.char == "?"
 					tile.is_tile = false
 					tile.image = @goal_img
+				elsif tile.char == "@"
+					@init_player_index = tile.index	
 				end	
 				x += @tile_size
 				row << (tile)
