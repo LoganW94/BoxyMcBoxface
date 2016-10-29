@@ -7,18 +7,14 @@ class Tile
 		@size = 32
 		@x = x
 		@y = y
-		@y2 = @y + @size
-		@x2 = @x + @size
+		#@y2 = @y + @size
+		#@x2 = @x + @size
 		@char = char
-		@collide = false
+		#@collide = false
 	end
 
-	def update x, y, px, py
-		@X = x
-		@y = y
-		@y2 = @y + @size
-		@x2 = @x + @size
-		#collision(px, py)
+	def update rate
+		@x += rate
 	end
 
 	def collision px, py
@@ -38,6 +34,8 @@ class Tile
 	end
 
 	def draw
-		@image.draw(@x, @y, 4)
+		if @is_tile == true
+			@image.draw(@x, @y, 4)
+		end
 	end
 end

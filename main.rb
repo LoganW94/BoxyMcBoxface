@@ -22,7 +22,6 @@ class Window < Gosu::Window
 		@pos_x = width/4
 		@back_pos_x = 0
 		@level_x = 0
-		@level_y = 0
 		@back_pos_y = -100
 		@back_tile_1 = 0
 		@back_tile_2 = 800
@@ -53,7 +52,7 @@ class Window < Gosu::Window
         @has_run = false
         @jump = false
         @floor = 368
-        @move_rate = 3
+        @move_rate = 0.2
 	end
 
 	def update
@@ -78,21 +77,23 @@ class Window < Gosu::Window
 				end						
 			end
 		elsif @state == 1 ############################################################################## # game state	
-			
-			@player.update(@levelgen.tiled_map)
+			@level_x = 0
+			@player.update
 			
             # player movement
-            if button_down?(Gosu::KbUp)# && @new_press_up
+            if button_down?(Gosu::KbUp)
           		@player.jump               
             end 
 			if button_down?(Gosu::KbLeft)
-            	@level_x += @player.rate       	             
+            	@level_x = @move_rate  	             
             end
             if button_down?(Gosu::KbRight) 
-            	@level_x -= @player.rate      	                               
+            	@level_x = -@move_rate    	                               
             end
             if button_down?(Gosu::KbReturn) && @new_press_enter
-            	@player.pos_x >= @levelgen.goal_x
+            	if @player.pos_x >= @levelgen.goal_x
+            		@state = 3
+            	end
             end
 
             if button_down?(Gosu::KbEscape) && @new_press_escape
@@ -168,7 +169,6 @@ class Window < Gosu::Window
             	@player.pos_y = @levelgen.player_y
             	@player.size = @tile_size
             	@player.rate = @move_rate
-            	@player.player_index = @levelgen.init_player_index
             	@state = 1
             	@continue = true
             end
@@ -207,7 +207,7 @@ class Window < Gosu::Window
 			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
 		elsif @state == 1
 			@player.draw
-			@levelgen.draw
+			@levelgen.draw(@level_x)
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)
 			@font.draw("#{@Code_display}", 25, height/2, 1)

@@ -21,6 +21,10 @@ class LevelGenerator
 		loadgraphics
 		interpret
 		create_tiles
+		#@tiled_map.each do |row|
+		#	row.each {|tile| puts tile.x}
+		#end
+
 	end
 
 	def loadlevel
@@ -50,20 +54,18 @@ class LevelGenerator
 		@map.each do |line|
 			line.each_char do |c|
 				tile = Tile.new(x, y, c)
-				if tile.char == "*"
+				if tile.char == "*" or tile.char == "!"
 					tile.is_tile = true
 					tile.image = @tile_img
-				elsif tile.char == "#" or tile.char == "!" or tile.char == "@"
+				elsif tile.char == "#" or tile.char == "@"
 					tile.is_tile = false
 					tile.image = @nil_img
 				elsif tile.char == "?"
 					tile.is_tile = false
 					tile.image = @goal_img
-				elsif tile.char == "@"
-					@init_player_index = tile.index	
-				end	
+				end
 				x += @tile_size
-				row << (tile)
+				row << tile
 			end
 			@tiled_map << row
 			x = 0
@@ -91,10 +93,10 @@ class LevelGenerator
 		end					
 	end
 
-	def draw
+	def draw rate
   		@tiled_map.each do |r| 
 			r.each do |tile|
-
+				tile.update(rate)
 				tile.draw
 			end
 		end	
