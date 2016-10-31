@@ -18,11 +18,7 @@ class Window < Gosu::Window
 		@quit_game_pos = (height/3)*2
 		@dot_pos = @new_game_pos
 		@pos_x = width/4
-		@back_pos_x = 0
 		@level_x = 0
-		@back_pos_y = -100
-		@back_tile_1 = 0
-		@back_tile_2 = 800
 		@font = Gosu::Font.new(70)
 		@font_small = Gosu::Font.new(30)
 		@dot = "@"
@@ -48,9 +44,7 @@ class Window < Gosu::Window
         @level_code = ["0000", "5555", "9879", "3482" ]   
         @tile_size = 32
         @has_run = false
-        @jump = false
-        @floor = 368
-        @move_rate = 0.2
+        @move_rate = 3
 	end
 
 	def update
@@ -76,15 +70,14 @@ class Window < Gosu::Window
 			end
 		elsif @state == 1 ############################################################################## # game state	
 			@level_x = 0	
-            # player movement
             if button_down?(Gosu::KbUp)
           		@player.jump               
             end 
 			if button_down?(Gosu::KbLeft)
-            	@level_x = @move_rate  	             
+            	@level_x += @move_rate  	             
             end
             if button_down?(Gosu::KbRight) 
-            	@level_x = -@move_rate    	                               
+            	@level_x += -@move_rate    	                               
             end
             if button_down?(Gosu::KbReturn) && @new_press_enter
             	if @player.pos_x >= @levelgen.goal_x
@@ -96,8 +89,8 @@ class Window < Gosu::Window
 				@dot_pos = @new_game_pos
 				@new_game = @resume_game
 			end     
-			@player.update
-			@levelgen.update(@player.pos_x, @player.pos_y)		
+			@player.update(@levelgen.player_row_index, @levelgen.player_tile_index, @levelgen.tiled_map)
+			@levelgen.update(@level_x)		
 		elsif @state == 0 && @continue == true ############################################################################## # main menu if game in progress
             
             if button_down?(Gosu::KbUp) && @new_press_up
@@ -204,7 +197,7 @@ class Window < Gosu::Window
 			@font_small.draw("#{@dot}", @pos_x - 30, @dot_pos + 20, 1)
 		elsif @state == 1
 			@player.draw
-			@levelgen.draw(@level_x)
+			@levelgen.draw
 		elsif @state == 2
 			@font.draw("#{@display}", 25, height/2 - 200, 1)
 			@font.draw("#{@Code_display}", 25, height/2, 1)

@@ -1,7 +1,7 @@
 
 class Tile
 	
-	attr_accessor :x, :y, :x2, :y2, :is_tile, :char, :image, :collide
+	attr_accessor :x, :y, :x2, :y2, :is_tile, :char, :image
 
 	def initialize x, y, char
 		@size = 32

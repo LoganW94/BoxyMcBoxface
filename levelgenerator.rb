@@ -22,16 +22,30 @@ class LevelGenerator
 		interpret
 		create_tiles
 		find_player_index
+		@travel = 0
 	end
 
-	def update player_x, player_y
-		@player_x = player_x
-		@player_y = player_y
-		current_index
-		collision
+	def update movement
+		@tiled_map.each do |r| 
+			r.each do |tile|
+				tile.update(movement)
+			end
+		end	
+		current_index(movement)
 	end
 
-	def current_index
+	def current_index movement
+		@travel += movement
+		if @travel >= 32
+			@player_tile_index -= 1
+			#puts "[#{@player_row_index}, #{@player_tile_index}]"
+			@travel = 0
+		end 
+		if @travel <= -32
+			@player_tile_index += 1
+			@travel = 0
+			#puts "[#{@player_row_index}, #{@player_tile_index}]"
+		end
 	end
 
 	def find_player_index
@@ -40,7 +54,7 @@ class LevelGenerator
 		@map.each do |row|
 			row.each_char do |char|
 				if char == "@"
-					puts "[#{r}, #{t}]"
+					puts "inti index [#{r}, #{t}] init start #{@player_x}"
 					@player_row_index = r
 					@player_tile_index = t
 				end 
@@ -49,9 +63,6 @@ class LevelGenerator
 			t = 0
 			r += 1
 		end
-	end
-
-	def collision
 	end
 
 	def loadlevel
@@ -76,9 +87,9 @@ class LevelGenerator
 	def create_tiles
 		x=0
 		y=0
-		row=[]
 		@tiled_map = []
 		@map.each do |line|
+			row = []
 			line.each_char do |c|
 				tile = Tile.new(x, y, c)
 				if tile.char == "*" or tile.char == "!"
@@ -86,10 +97,10 @@ class LevelGenerator
 					tile.image = @tile_img
 				elsif tile.char == "#" or tile.char == "@"
 					tile.is_tile = false
-					tile.image = @nil_img
 				elsif tile.char == "?"
-					tile.is_tile = false
+					tile.is_tile = true
 					tile.image = @goal_img
+					tile.y -= 125
 				end
 				row << tile
 				x += @tile_size
@@ -121,10 +132,9 @@ class LevelGenerator
 		end					
 	end
 
-	def draw rate
+	def draw
   		@tiled_map.each do |r| 
 			r.each do |tile|
-				tile.update(rate)
 				tile.draw
 			end
 		end	
