@@ -1,6 +1,5 @@
 require 'gosu'
 
-
 class Enemy
 
     attr_accessor :pos_x, :pos_y, :height, :width

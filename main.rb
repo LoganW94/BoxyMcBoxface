@@ -7,8 +7,6 @@ require_relative 'levelgenerator'
 
 class Window < Gosu::Window
 
-	
-
 	def initialize width = 800, height = 600, fullscreen = false
 		super
 		
@@ -77,9 +75,7 @@ class Window < Gosu::Window
 				end						
 			end
 		elsif @state == 1 ############################################################################## # game state	
-			@level_x = 0
-			@player.update
-			
+			@level_x = 0	
             # player movement
             if button_down?(Gosu::KbUp)
           		@player.jump               
@@ -95,12 +91,13 @@ class Window < Gosu::Window
             		@state = 3
             	end
             end
-
             if button_down?(Gosu::KbEscape) && @new_press_escape
 				@state = 0
 				@dot_pos = @new_game_pos
 				@new_game = @resume_game
-			end     		
+			end     
+			@player.update
+			@levelgen.update(@player.pos_x, @player.pos_y)		
 		elsif @state == 0 && @continue == true ############################################################################## # main menu if game in progress
             
             if button_down?(Gosu::KbUp) && @new_press_up

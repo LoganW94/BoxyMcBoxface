@@ -4,9 +4,9 @@ require_relative 'tile'
 
 class LevelGenerator
 
-	attr_accessor :level, :player_x, :player_y, :num_enemies, :map, :level_hash, :tile_size, :tiled_map, :goal_x, :init_player_index
+	attr_accessor :level, :player_x, :player_y, :num_enemies, :map, :level_hash, :tile_size, :tiled_map, :goal_x, :player_row_index, :player_tile_index
 =begin
-		breaks up bmp and gives player_start, num_enemies, goal etc
+		breaks up bmp and gives player_start, num_enemies
 		! = enemy
 		@ = player_start
 		? = goal
@@ -21,10 +21,37 @@ class LevelGenerator
 		loadgraphics
 		interpret
 		create_tiles
-		#@tiled_map.each do |row|
-		#	row.each {|tile| puts tile.x}
-		#end
+		find_player_index
+	end
 
+	def update player_x, player_y
+		@player_x = player_x
+		@player_y = player_y
+		current_index
+		collision
+	end
+
+	def current_index
+	end
+
+	def find_player_index
+		r = 0
+		t = 0
+		@map.each do |row|
+			row.each_char do |char|
+				if char == "@"
+					puts "[#{r}, #{t}]"
+					@player_row_index = r
+					@player_tile_index = t
+				end 
+				t +=1
+			end
+			t = 0
+			r += 1
+		end
+	end
+
+	def collision
 	end
 
 	def loadlevel
@@ -64,8 +91,8 @@ class LevelGenerator
 					tile.is_tile = false
 					tile.image = @goal_img
 				end
-				x += @tile_size
 				row << tile
+				x += @tile_size
 			end
 			@tiled_map << row
 			x = 0
@@ -85,6 +112,7 @@ class LevelGenerator
 				elsif c == "@"
 					@player_x = x
 					@player_y = y
+					puts "player"
 				end 
 				x += @tile_size
 			end
@@ -101,5 +129,4 @@ class LevelGenerator
 			end
 		end	
 	end
-	
 end

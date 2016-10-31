@@ -1,5 +1,4 @@
 require 'gosu'
-require_relative 'shapes'
 
 class Player
 
@@ -16,12 +15,7 @@ class Player
 	end
 
 	def jump
-		if @counter < 10
-			@pos_y -= 15
-			@counter +=1
-		elsif @counter == 10
-			@counter = 0
-		end
+		@pos_y -= 15
 	end
 
 	def gravity

@@ -1,6 +1,5 @@
 require 'gosu'
 
-
 class Background
 
 	def initialize
